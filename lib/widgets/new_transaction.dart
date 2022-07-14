@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:udemy_expense_app/models/transaction.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addTx;
   NewTransaction(this.addTx);
 
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
+
   final amountController = TextEditingController();
 
   void submitData() {
@@ -15,10 +20,11 @@ class NewTransaction extends StatelessWidget {
       print("field kosong");
       return;
     }
-    addTx(
+    widget.addTx(
       enteredTitle,
       enteredAmount,
     );
+    Navigator.pop(context);
   }
 
   @override
