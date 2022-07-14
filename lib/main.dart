@@ -57,6 +57,8 @@ class MyHomePage extends StatelessWidget {
           UserTransactions()
         ],
       ),
+      floatingActionButton:
+          FloatingActionButton(onPressed: () {}, child: Icon(Icons.add)),
     );
   }
 }

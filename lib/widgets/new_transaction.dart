@@ -4,8 +4,23 @@ import 'package:udemy_expense_app/models/transaction.dart';
 class NewTransaction extends StatelessWidget {
   final Function addTx;
   NewTransaction(this.addTx);
+
   final titleController = TextEditingController();
   final amountController = TextEditingController();
+
+  void submitData() {
+    final enteredTitle = titleController.text;
+    final enteredAmount = double.parse(amountController.text);
+    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+      print("field kosong");
+      return;
+    }
+    addTx(
+      enteredTitle,
+      enteredAmount,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -19,17 +34,17 @@ class NewTransaction extends StatelessWidget {
               // onChanged: ((val) => titleInput = val),
               controller: titleController,
               decoration: InputDecoration(labelText: "Title"),
+              onSubmitted: (_) => submitData,
             ),
             TextField(
               // onChanged: ((val) => amountInput = val),
               controller: amountController,
               decoration: InputDecoration(labelText: "Amount"),
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => submitData,
             ),
             TextButton(
-              onPressed: () {
-                addTx(
-                    titleController.text, double.parse(amountController.text));
-              },
+              onPressed: submitData,
               child: Text(
                 "Add Transaction",
                 style: TextStyle(color: Colors.purple),
