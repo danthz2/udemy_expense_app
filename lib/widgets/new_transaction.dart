@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
 
 class NewTransaction extends StatelessWidget {
-  NewTransaction({Key? key}) : super(key: key);
+  final Function addTx;
+  NewTransaction(this.addTx);
   final titleController = TextEditingController();
   final amountController = TextEditingController();
   @override
@@ -26,13 +27,8 @@ class NewTransaction extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                var data = Transaction(
-                    id: "t3",
-                    title: titleController.text,
-                    amount: double.parse(amountController.text),
-                    date: DateTime.now());
-
-                print("jalan");
+                addTx(
+                    titleController.text, double.parse(amountController.text));
               },
               child: Text(
                 "Add Transaction",
