@@ -3,25 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
-  final List<Transaction> _userTransactions = [
-    Transaction(
-      id: "t1",
-      title: "New Shoes",
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: "t2",
-      title: "Weekly Groceries",
-      amount: 16.39,
-      date: DateTime.now(),
-    ),
-  ];
+  List<Transaction> transactions;
+  TransactionList(this.transactions);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: _userTransactions
+      children: transactions
           .map((tx) => Card(
                 child: Row(
                   children: [

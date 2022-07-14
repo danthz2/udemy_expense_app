@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
 import 'package:udemy_expense_app/widgets/new_transaction.dart';
 import 'package:udemy_expense_app/widgets/transaction_list.dart';
+import 'package:udemy_expense_app/widgets/user_transactions.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,21 +41,23 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Flutter App"),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              width: double.infinity,
-              height: 100,
-              child: Card(
-                elevation: 5,
-                child: Text("CHART!"),
-              ),
+      appBar: AppBar(
+        title: Text("Flutter App"),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 100,
+            child: Card(
+              elevation: 5,
+              child: Text("CHART!"),
             ),
-          ],
-        ));
+          ),
+          UserTransactions()
+        ],
+      ),
+    );
   }
 }
