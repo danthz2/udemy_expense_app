@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
+import 'package:udemy_expense_app/widgets/chart.dart';
 import 'package:udemy_expense_app/widgets/new_transaction.dart';
 import 'package:udemy_expense_app/widgets/transaction_list.dart';
 
@@ -99,6 +100,16 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ];
 
+  // Ambil transaksi
+
+  List<Transaction> get _recentTransactions {
+    //transaksi dimana => tx dari tipe <Transaction> yang date nya
+    return _userTransactions.where((tx) {
+      //bernilai true kalau datenya setelah 7 hari yang lalu (sekarang tgl 15 berarti true setelah tanggal 8, tgl 8 kebawah g di itung)
+      return tx.date!.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
   void _addNewTransaction(String txTitle, double txAmount) {
     final newTx = Transaction(
       id: DateTime.now().toString(),
@@ -139,18 +150,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          Container(
-            width: double.infinity,
-            height: 100,
-            child: Card(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Card(
               elevation: 5,
               child: Text("CHART!"),
             ),
-          ),
-          TransactionList(_userTransactions),
-        ],
+            Chart(_recentTransactions),
+            TransactionList(_userTransactions),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
