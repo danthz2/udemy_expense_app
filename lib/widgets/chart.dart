@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
+import 'package:udemy_expense_app/widgets/chart_bar.dart';
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
@@ -34,15 +35,38 @@ class Chart extends StatelessWidget {
     );
   }
 
+  double get totalSpending {
+    return groupedTransactionsValues.fold<double>(
+      0,
+      (sum, item) {
+        return sum + (double.parse(item['amount'].toString()));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
       margin: EdgeInsets.all(20),
-      child: Row(
-        children: groupedTransactionsValues.map((data) {
-          return Text("${data['day']} : ${data['amount']} ");
-        }).toList(),
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: groupedTransactionsValues.map((data) {
+            return Flexible(
+              flex: 1,
+              fit: FlexFit.tight,
+              child: ChartBar(
+                data['day'].toString(),
+                double.parse(data['amount'].toString()),
+                totalSpending == 0.0
+                    ? 0.0
+                    : double.parse(data['amount'].toString()) / totalSpending,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
