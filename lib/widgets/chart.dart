@@ -25,12 +25,10 @@ class Chart extends StatelessWidget {
           }
         }
 
-        print(DateFormat.E().format(weekDay));
-        print(totalSum);
         return {
           //  value dari key 'day' diambil dari weekDay yang sudah di substract menjadi 1 huruf Day (contoh Tuesday = T)
-          'day': DateFormat.E().format(weekDay),
-          'amount': totalSum,
+          'day': DateFormat.E().format(weekDay).substring(0, 1),
+          'amount': totalSum.toStringAsFixed(2),
         };
       },
     );
@@ -38,11 +36,14 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(groupedTransactionsValues);
     return Card(
       elevation: 6,
       margin: EdgeInsets.all(20),
-      child: Row(),
+      child: Row(
+        children: groupedTransactionsValues.map((data) {
+          return Text("${data['day']} : ${data['amount']} ");
+        }).toList(),
+      ),
     );
   }
 }
