@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:udemy_expense_app/models/transaction.dart';
 import 'package:udemy_expense_app/widgets/chart.dart';
 import 'package:udemy_expense_app/widgets/new_transaction.dart';
 import 'package:udemy_expense_app/widgets/transaction_list.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 
@@ -27,6 +33,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.purple,
+        accentColor: Colors.amber,
         fontFamily: 'Quicksand',
         appBarTheme: AppBarTheme(
           titleTextStyle: TextStyle(
@@ -59,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // Ambil transaksi
 
+  bool _showChart = false;
   List<Transaction> get _recentTransactions {
     //transaksi dimana => tx dari tipe <Transaction> yang date nya
     return _userTransactions.where((tx) {
@@ -100,25 +108,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Personal Expenses",
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              _startAddNewTransaction(context);
-            },
-            icon: Icon(Icons.add),
-          ),
-        ],
+    final appBar = AppBar(
+      title: Text(
+        "Personal Expenses",
       ),
+      actions: [
+        IconButton(
+          onPressed: () {
+            _startAddNewTransaction(context);
+          },
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions, _deleteTransaction),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Show Chart"),
+                Switch(
+                  value: _showChart,
+                  onChanged: (bool val) {
+                    setState(() {
+                      _showChart = val;
+                    });
+                  },
+                )
+              ],
+            ),
+            _showChart
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.3,
+                    child: Chart(_recentTransactions))
+                : Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child:
+                        TransactionList(_userTransactions, _deleteTransaction)),
           ],
         ),
       ),
