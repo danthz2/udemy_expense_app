@@ -34,15 +34,15 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         accentColor: Colors.amber,
         fontFamily: 'Quicksand',
-        appBarTheme: AppBarTheme(
-          titleTextStyle: TextStyle(
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: const TextStyle(
             fontFamily: 'OpenSans',
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
         textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(
+              headline6: const TextStyle(
                 fontFamily: 'OpenSans',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -59,18 +59,36 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   // String? titleInput;
   final List<Transaction> _userTransactions = [];
 
   // Ambil transaksi
 
   bool _showChart = false;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("State: $state");
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
   List<Transaction> get _recentTransactions {
     //transaksi dimana => tx dari tipe <Transaction> yang date nya
     return _userTransactions.where((tx) {
       //bernilai true kalau datenya setelah 7 hari yang lalu (sekarang tgl 15 berarti true setelah tanggal 8, tgl 8 kebawah g di itung)
-      return tx.date!.isAfter(DateTime.now().subtract(Duration(days: 7)));
+      return tx.date!.isAfter(DateTime.now().subtract(const Duration(days: 7)));
     }).toList();
   }
 
@@ -105,12 +123,58 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar, Widget txListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Show Chart"),
+          Switch(
+            value: _showChart,
+            onChanged: (bool val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          )
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions))
+          : txListWidget
+    ];
+  }
+
+  List<Widget> _buildPotraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget txListWidget,
+  ) {
+    return [
+      Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_recentTransactions),
+      ),
+      txListWidget
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('build() MyHomePageState');
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
-      title: Text(
+      title: const Text(
         "Personal Expenses",
       ),
       actions: [
@@ -118,12 +182,12 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             _startAddNewTransaction(context);
           },
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
         ),
       ],
     );
     final appBarIos = CupertinoNavigationBar(
-      middle: Text(
+      middle: const Text(
         "Personal Expenses",
       ),
       trailing: Row(
@@ -131,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           GestureDetector(
             onTap: () {},
-            child: Icon(CupertinoIcons.add),
+            child: const Icon(CupertinoIcons.add),
           )
         ],
       ),
@@ -145,42 +209,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
     final pageBody = SafeArea(
       child: SingleChildScrollView(
-        child: Column(
-          children: [
-            if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Show Chart"),
-                  Switch(
-                    value: _showChart,
-                    onChanged: (bool val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  )
-                ],
-              ),
-            if (!isLandscape)
-              Container(
-                  height: (mediaQuery.size.height -
-                          appBar.preferredSize.height -
-                          mediaQuery.padding.top) *
-                      0.3,
-                  child: Chart(_recentTransactions)),
-            if (!isLandscape) txListWidget,
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(_recentTransactions))
-                  : txListWidget
-          ],
-        ),
+        child: Column(children: [
+          if (isLandscape)
+            ..._buildLandscapeContent(mediaQuery, appBar, txListWidget),
+          if (!isLandscape)
+            ..._buildPotraitContent(mediaQuery, appBar, txListWidget),
+        ]),
       ),
     );
     return Platform.isIOS
@@ -197,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       _startAddNewTransaction(context);
                     },
-                    child: Icon(Icons.add)),
+                    child: const Icon(Icons.add)),
           );
   }
 }

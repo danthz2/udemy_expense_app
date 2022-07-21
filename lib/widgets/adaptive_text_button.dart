@@ -4,28 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class AdaptiveTextButton extends StatelessWidget {
-  Function _presentDatePicker;
+  final String text;
+  final Function handler;
 
-  AdaptiveTextButton(this._presentDatePicker);
+  AdaptiveTextButton(this.handler, this.text);
 
   @override
   Widget build(BuildContext context) {
     return Platform.isIOS
         ? CupertinoButton(
             child: Text(
-              "Choose Date",
+              text,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () {
-              _presentDatePicker();
+              handler();
             },
           )
         : TextButton(
             onPressed: () {
-              _presentDatePicker();
+              handler();
             },
             child: Text(
-              "Choose Date",
+              text,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           );

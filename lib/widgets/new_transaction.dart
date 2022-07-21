@@ -7,10 +7,16 @@ import 'package:udemy_expense_app/widgets/adaptive_text_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print("Constructor NewTransaction Widget");
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print("createState NewTransaction Widget");
+
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
@@ -19,6 +25,30 @@ class _NewTransactionState extends State<NewTransaction> {
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
 
+  _NewTransactionState() {
+    print("Constructor NewTransaction State");
+  }
+
+  @override
+  void initState() {
+    print("initState()");
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(NewTransaction oldWidget) {
+    print("didUpdate()");
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    print("dispose()");
+
+    super.dispose();
+  }
+
   void _submitData() {
     if (_amountController.text.isEmpty) {
       return;
@@ -26,7 +56,6 @@ class _NewTransactionState extends State<NewTransaction> {
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
     if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
-      print("field kosong");
       return;
     }
     widget.addTx(enteredTitle, enteredAmount, _selectedDate);
